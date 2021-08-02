@@ -1,34 +1,23 @@
-from datetime import date, datetime
+#from datetime import date, datetime
 import traceback
 import cron_utils
 
 def converter(cron_string):
     try:
         converted=""
-        cron_minutes, cron_hour, cron_day, cron_month, cron_dof = cron_string.split(' ')
-        print(cron_minutes, cron_hour, cron_day, cron_month, cron_dof)
-        assert (cron_minutes == '*')  or    (','  in cron_minutes)  or    ('/'  in cron_minutes)  or    ('-'  in cron_minutes)  or (int(cron_minutes)>=0 and int(cron_minutes)<=59)
-        assert (cron_hour =='*'    )  or    (','  in cron_hour)     or    ('/'  in cron_hour)     or    ('-'  in cron_hour)     or (int(cron_hour)>=0    and int(cron_hour)<=23   )   
-        assert (cron_day =='*'     )  or    (','  in cron_day)      or    ('/'  in cron_day)      or    ('-'  in cron_day)      or (int(cron_day)>=1     and int(cron_day)<=31    )    
-        assert (cron_month =='*'   )  or    (','  in cron_month)    or    ('/'  in cron_month)    or    ('-'  in cron_month)    or (int(cron_month)>=1   and int(cron_month)<=12  )  
-        assert (cron_dof =='*'     )  or    (','  in cron_dof)      or    ('/'  in cron_dof)      or    ('-'  in cron_dof)      or (int(cron_dof)>=0     and int(cron_dof)<=6     )    
+        if (cron_string.count(' ')!=4):
+            raise Exception('cron string','wrong format')
+        cron_minutes, cron_hour, cron_day, cron_month, cron_dow = cron_string.split(' ')
+        print(cron_minutes, cron_hour, cron_day, cron_month, cron_dow)
         
         #month
         converted+=cron_utils.month_converter(cron_month)
 
-        #dof
-        dof_flag=False
-        days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Saturday"]
-        if(cron_dof != '*' and cron_day == "*"):
-            converted += ("every "+days[int(cron_dof)]+", ")
-            dof_flag = True
-        elif(cron_dof != '*'):
-            converted += ("every "+days[int(cron_dof)]+" and ")
-            dof_flag = True
-
+        #dow
+        converted+=cron_utils.dow_converter(cron_dow= cron_dow, cron_day= cron_day)
 
         #day
-        if(cron_day == '*' and not dof_flag):
+        if(cron_day == '*' and cron_dow == "*"):
             converted+=("every day, ")
         elif(cron_day.isnumeric()):
             if(  int(cron_day) > 1):
@@ -58,8 +47,9 @@ def converter(cron_string):
         traceback.print_exc()
 
 if __name__ == "__main__":
-    print(datetime.now())
+    #print(datetime.now())
     print(converter("4 * 5 7 *"))
     print(converter("4 1 2 3 4"))
     print(converter("* * * */2 2"))
     print(converter("* * * 1,4,2,6 2"))
+
