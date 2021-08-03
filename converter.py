@@ -17,13 +17,7 @@ def converter(cron_string):
         converted+=cron_utils.dow_converter(cron_dow= cron_dow, cron_day= cron_day)
 
         #day
-        if(cron_day == '*' and cron_dow == "*"):
-            converted+=("every day, ")
-        elif(cron_day.isnumeric()):
-            if(  int(cron_day) > 1):
-                converted+=("every "+cron_day+" days, ")
-            else:
-                converted+=("every "+cron_day+" day, ")
+        converted+=cron_utils.day_converter(cron_dow= cron_dow, cron_day= cron_day)
 
         #hour:minutes
         if(cron_hour.isnumeric() and cron_minutes.isnumeric()):
@@ -48,8 +42,10 @@ def converter(cron_string):
 
 if __name__ == "__main__":
     #print(datetime.now())
-    print(converter("4 * 5 7 *"))
-    print(converter("4 1 2 3 4"))
-    print(converter("* * * */2 2"))
-    print(converter("* * * 1,4,2,6 2"))
+    # print(converter("4 * 5 7 *"))
+    # print(converter("4 1 2 3 4"))
+    print(converter("4 1 5-20/3,*/2 3 4"))
+    # print(converter("4 1 2 3 4"))
+    # print(converter("* * * */2 2"))
+    # print(converter("* * * 1,4,2,6 2"))
 
